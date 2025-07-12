@@ -31,20 +31,20 @@ func (h *TinyURLHandler) CreateTinyURL(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
-		h.logger.Printf("Error decoding request body: %v", err)
-		utils.WriteJSON(w, http.StatusBadRequest, utils.Envelope{"error": "Invalid request body"})
+		h.logger.Printf("ERROR: decoding request body: %v", err)
+		utils.WriteJSON(w, http.StatusOK, utils.Envelope{"error": "Invalid request body"})
 		return
 	}
 
 	if req.OriginalURL == "" {
-		h.logger.Printf("Error: original URL is empty")
-		utils.WriteJSON(w, http.StatusBadRequest, utils.Envelope{"error": "Original URL is required"})
+		h.logger.Printf("ERROR: original URL is empty")
+		utils.WriteJSON(w, http.StatusOK, utils.Envelope{"error": "Original URL is required"})
 		return
 	}
 
 	existingTinyURL, err := h.tinyURLStore.GetByOriginalURL(req.OriginalURL)
 	if err == nil && existingTinyURL != nil {
-		h.logger.Printf("Returning existing tiny URL: %v", existingTinyURL.ShortURL)
+		h.logger.Printf("INFO: Returning existing tiny URL: %v", existingTinyURL.ShortURL)
 		utils.WriteJSON(w, http.StatusOK, utils.Envelope{"shortUrl": existingTinyURL.ShortURL})
 		return
 	}
@@ -65,13 +65,13 @@ func (h *TinyURLHandler) CreateTinyURL(w http.ResponseWriter, r *http.Request) {
 
 	err = h.tinyURLStore.Create(tinyURL)
 	if err != nil {
-		h.logger.Printf("Error creating tiny URL: %v", err)
-		utils.WriteJSON(w, http.StatusInternalServerError, utils.Envelope{"error": "Failed to create tiny URL"})
+		h.logger.Printf("ERROR: creating tiny URL: %v", err)
+		utils.WriteJSON(w, http.StatusOK, utils.Envelope{"error": "Failed to create tiny URL"})
 		return
 	}
 
-	h.logger.Printf("Tiny URL created: %v", tinyURL.ShortURL)
-	utils.WriteJSON(w, http.StatusCreated, utils.Envelope{"shortUrl": tinyURL.ShortURL})
+	h.logger.Printf("INFO: Tiny URL created: %v", tinyURL.ShortURL)
+	utils.WriteJSON(w, http.StatusOK, utils.Envelope{"shortUrl": tinyURL.ShortURL})
 }
 
 func generateShortURL() string {
@@ -82,18 +82,18 @@ func (h *TinyURLHandler) GetTinyURL(w http.ResponseWriter, r *http.Request) {
 	var req getTinyURLRequest
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
-		h.logger.Printf("Error decoding request body: %v", err)
-		utils.WriteJSON(w, http.StatusBadRequest, utils.Envelope{"error": "Invalid request body"})
+		h.logger.Printf("ERROR: decoding request body: %v", err)
+		utils.WriteJSON(w, http.StatusOK, utils.Envelope{"error": "Invalid request body"})
 		return
 	}
 
 	tinyURL, err := h.tinyURLStore.Get(req.ShortURL)
 	if err != nil {
-		h.logger.Printf("Error getting tiny URL: %v", err)
-		utils.WriteJSON(w, http.StatusNotFound, utils.Envelope{"error": "Tiny URL not found"})
+		h.logger.Printf("ERROR: getting tiny URL: %v", err)
+		utils.WriteJSON(w, http.StatusOK, utils.Envelope{"error": "Tiny URL not found"})
 		return
 	}
 
-	h.logger.Printf("URL found: %v", tinyURL.OriginalURL)
+	h.logger.Printf("INFO: URL found: %v", tinyURL.OriginalURL)
 	utils.WriteJSON(w, http.StatusOK, utils.Envelope{"originalUrl": tinyURL.OriginalURL})
 }
