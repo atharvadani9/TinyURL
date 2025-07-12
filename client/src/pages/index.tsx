@@ -6,11 +6,17 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { enqueueSnackbar } from "notistack";
 import { useState, type JSX } from "react";
+import { useParams } from "react-router";
 import { postAPI } from "../utils/httputils";
 
 const TinyURL = (): JSX.Element => {
   const [originalURL, setOriginalURL] = useState("");
   const [shortURL, setShortURL] = useState("");
+  const { param } = useParams();
+
+  if (param === "404") {
+    enqueueSnackbar("Sorry page not found!", { variant: "error" });
+  }
 
   const shortenURL = async () => {
     if (
@@ -56,6 +62,7 @@ const TinyURL = (): JSX.Element => {
           <TextField
             label="URL"
             variant="standard"
+            fullWidth
             value={originalURL}
             onChange={(e) => setOriginalURL(e.target.value)}
           />
