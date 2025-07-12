@@ -1,7 +1,15 @@
-import { addDays, format } from "date-fns";
+import { ThemeProvider } from "@emotion/react";
+import CssBaseline from "@mui/material/CssBaseline";
+import TinyURL from "./components";
+import darkTheme from "./utils/theme";
 
 function App() {
-  return <>Tomorrow's Date: {format(addDays(new Date(), 1), "do MMMM yyyy")}</>;
+  return (
+    <ThemeProvider theme={darkTheme}>
+      <CssBaseline />
+      <TinyURL />
+    </ThemeProvider>
+  );
 }
 
 export default App;
