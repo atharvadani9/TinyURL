@@ -9,5 +9,6 @@ import (
 func SetupRoutes(app *app.Application) *chi.Mux {
 	r := chi.NewRouter()
 	r.Get("/health", app.HealthCheck)
+	r.Post("/tinyurl", app.TinyURLHandler.CreateTinyURL)
 	return r
 }

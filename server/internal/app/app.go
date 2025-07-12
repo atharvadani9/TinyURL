@@ -7,13 +7,15 @@ import (
 	"net/http"
 	"os"
 
+	"tinyurl/internal/api"
 	"tinyurl/internal/migrations"
 	"tinyurl/internal/store"
 )
 
 type Application struct {
-	Logger *log.Logger
-	DB     *sql.DB
+	Logger         *log.Logger
+	TinyURLHandler *api.TinyURLHandler
+	DB             *sql.DB
 }
 
 func NewApplication() (*Application, error) {
@@ -29,9 +31,14 @@ func NewApplication() (*Application, error) {
 
 	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
 
+	tinyURLStore := store.NewPostgresTinyURLStore(pgDB)
+
+	tinyURLHandler := api.NewTinyURLHandler(tinyURLStore, logger)
+
 	app := &Application{
-		Logger: logger,
-		DB:     pgDB,
+		Logger:         logger,
+		TinyURLHandler: tinyURLHandler,
+		DB:             pgDB,
 	}
 
 	return app, nil
