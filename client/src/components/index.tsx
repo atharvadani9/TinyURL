@@ -1,7 +1,10 @@
+import CopyIcon from "@mui/icons-material/ContentCopy";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
+import IconButton from "@mui/material/IconButton";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
+import { enqueueSnackbar } from "notistack";
 import { useState, type JSX } from "react";
 import { postAPI } from "../utils/httputils";
 
@@ -14,7 +17,7 @@ const TinyURL = (): JSX.Element => {
       !originalURL.startsWith("http://") &&
       !originalURL.startsWith("https://")
     ) {
-      console.log("Invalid URL");
+      enqueueSnackbar("Invalid URL", { variant: "error" });
       return;
     }
     const payload = { originalUrl: originalURL };
@@ -24,9 +27,12 @@ const TinyURL = (): JSX.Element => {
       { shortUrl?: string; error?: string }
     >("/create.tinyurl", payload);
     if (resp.error && resp.error !== "") {
-      console.error("Error shortening URL:", resp.error);
+      enqueueSnackbar(`Error shortening URL: ${resp.error}`, {
+        variant: "error",
+      });
     } else {
-      setShortURL(resp.shortUrl || "");
+      setShortURL("http://localhost:5173/" + resp.shortUrl || "");
+      enqueueSnackbar("URL shortened successfully!", { variant: "success" });
     }
   };
 
@@ -35,7 +41,7 @@ const TinyURL = (): JSX.Element => {
       container
       justifyContent="center"
       sx={{
-        px: 2,
+        pt: 2,
         alignItems: "center",
       }}
       direction={"column"}
@@ -45,28 +51,40 @@ const TinyURL = (): JSX.Element => {
           {"TinyURL"}
         </Typography>
       </Grid>
-      <Grid container sx={{ pt: 2 }}>
+      <Grid container sx={{ pt: 2, alignItems: "center", gap: 2 }}>
         <Grid>
           <TextField
             label="Original URL"
-            variant="outlined"
+            variant="standard"
             value={originalURL}
             onChange={(e) => setOriginalURL(e.target.value)}
           />
         </Grid>
-        <Grid>
+        <Grid sx={{ pt: 1 }}>
           <Button variant="contained" onClick={shortenURL}>
             {"Shorten"}
           </Button>
         </Grid>
       </Grid>
-      <Grid container sx={{ pt: 2 }}>
-        <Grid>
-          <Typography variant="h6" sx={{ textAlign: "center" }}>
-            {"The shortened URL is: " + shortURL}
-          </Typography>
+      {shortURL && (
+        <Grid container sx={{ pt: 2, alignItems: "center", gap: 2 }}>
+          <Grid>
+            <Typography variant="h6" sx={{ alignItems: "center" }}>
+              {"The shortened URL is: " + shortURL}
+            </Typography>
+          </Grid>
+          <Grid>
+            <IconButton
+              onClick={() => {
+                navigator.clipboard.writeText(shortURL);
+                enqueueSnackbar("Copied to clipboard!", { variant: "success" });
+              }}
+            >
+              <CopyIcon />
+            </IconButton>
+          </Grid>
         </Grid>
-      </Grid>
+      )}
     </Grid>
   );
 };
