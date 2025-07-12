@@ -1,7 +1,7 @@
-import { ThemeProvider } from "@emotion/react";
 import CloseIcon from "@mui/icons-material/Close";
 import CssBaseline from "@mui/material/CssBaseline";
 import IconButton from "@mui/material/IconButton";
+import { ThemeProvider } from "@mui/material/styles";
 import { SnackbarProvider, closeSnackbar } from "notistack";
 import TinyURL from "./components";
 import darkTheme from "./utils/theme";
