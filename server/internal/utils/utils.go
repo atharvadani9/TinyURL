@@ -5,12 +5,9 @@ import (
 	"math/rand"
 	"net/http"
 	"strings"
-	"time"
 )
 
 type Envelope map[string]any
-
-const base62Chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 func WriteJSON(w http.ResponseWriter, status int, data Envelope) error {
 	js, err := json.MarshalIndent(data, "", "  ")
@@ -26,9 +23,7 @@ func WriteJSON(w http.ResponseWriter, status int, data Envelope) error {
 }
 
 func GenerateRandomString(length int) string {
-	// Seed the random number generator
-	rand.Seed(time.Now().UnixNano())
-
+	const base62Chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	var result strings.Builder
 	result.Grow(length)
 
