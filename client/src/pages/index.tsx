@@ -5,18 +5,20 @@ import IconButton from "@mui/material/IconButton";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { enqueueSnackbar } from "notistack";
-import { useState, type JSX } from "react";
-import { useParams } from "react-router";
+import { useEffect, useState, type JSX } from "react";
+import { useLocation } from "react-router";
 import { postAPI } from "../utils/httputils";
 
 const TinyURL = (): JSX.Element => {
   const [originalURL, setOriginalURL] = useState("");
   const [shortURL, setShortURL] = useState("");
-  const { param } = useParams();
+  const location = useLocation();
 
-  if (param === "404") {
-    enqueueSnackbar("Sorry page not found!", { variant: "error" });
-  }
+  useEffect(() => {
+    if (location.pathname === "/404") {
+      enqueueSnackbar("Sorry page not found!", { variant: "error" });
+    }
+  }, [location.pathname]);
 
   const shortenURL = async () => {
     if (
