@@ -38,6 +38,13 @@ func (h *TinyURLHandler) CreateTinyURL(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	existingTinyURL, err := h.tinyURLStore.GetByOriginalURL(req.OriginalURL)
+	if err == nil && existingTinyURL != nil {
+		h.logger.Printf("Returning existing tiny URL: %v", existingTinyURL.ShortURL)
+		utils.WriteJSON(w, http.StatusOK, utils.Envelope{"tinyUrl": existingTinyURL.ShortURL})
+		return
+	}
+
 	shortURL := generateShortURL()
 	for {
 		_, err := h.tinyURLStore.Get(shortURL)
@@ -59,10 +66,14 @@ func (h *TinyURLHandler) CreateTinyURL(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	h.logger.Printf("Tiny URL created: %v", tinyURL)
-	utils.WriteJSON(w, http.StatusCreated, utils.Envelope{"tinyUrl": tinyURL})
+	h.logger.Printf("Tiny URL created: %v", tinyURL.ShortURL)
+	utils.WriteJSON(w, http.StatusCreated, utils.Envelope{"tinyUrl": tinyURL.ShortURL})
 }
 
 func generateShortURL() string {
 	return utils.GenerateRandomString(6)
+}
+
+func (h *TinyURLHandler) GetTinyURL(w http.ResponseWriter, r *http.Request) {
+
 }

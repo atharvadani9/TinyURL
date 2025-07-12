@@ -22,6 +22,7 @@ func NewPostgresTinyURLStore(db *sql.DB) *PostgresTinyURLStore {
 type TinyURLStore interface {
 	Create(tinyURL *TinyURL) error
 	Get(shortURL string) (*TinyURL, error)
+	GetByOriginalURL(originalURL string) (*TinyURL, error)
 }
 
 func (s *PostgresTinyURLStore) Create(tinyURL *TinyURL) error {
@@ -52,5 +53,23 @@ func (s *PostgresTinyURLStore) Get(shortURL string) (*TinyURL, error) {
 		return nil, err
 	}
 
+	tinyURL.ShortURL = shortURL
+	return tinyURL, nil
+}
+
+func (s *PostgresTinyURLStore) GetByOriginalURL(originalURL string) (*TinyURL, error) {
+	query := `
+		SELECT id, short_url, created_at
+		FROM tinyurl
+		WHERE original_url = $1
+	`
+
+	tinyURL := &TinyURL{}
+	err := s.db.QueryRow(query, originalURL).Scan(&tinyURL.ID, &tinyURL.ShortURL, &tinyURL.CreatedAt)
+	if err != nil {
+		return nil, err
+	}
+
+	tinyURL.OriginalURL = originalURL
 	return tinyURL, nil
 }
