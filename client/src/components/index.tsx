@@ -48,13 +48,13 @@ const TinyURL = (): JSX.Element => {
     >
       <Grid size={{ xs: 12 }}>
         <Typography variant="h3" sx={{ textAlign: "center" }}>
-          {"TinyURL"}
+          {"Tiny URL"}
         </Typography>
       </Grid>
       <Grid container sx={{ pt: 2, alignItems: "center", gap: 2 }}>
         <Grid>
           <TextField
-            label="Original URL"
+            label="URL"
             variant="standard"
             value={originalURL}
             onChange={(e) => setOriginalURL(e.target.value)}
@@ -70,7 +70,7 @@ const TinyURL = (): JSX.Element => {
         <Grid container sx={{ pt: 2, alignItems: "center", gap: 2 }}>
           <Grid>
             <Typography variant="h6" sx={{ alignItems: "center" }}>
-              {"The shortened URL is: " + shortURL}
+              {"The Tiny URL is: " + shortURL}
             </Typography>
           </Grid>
           <Grid>
