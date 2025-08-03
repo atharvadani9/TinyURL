@@ -1,4 +1,4 @@
-# Tiny-URL
+# TinyURL
 
 A full-stack URL shortening service built with React, TypeScript, Go, and PostgreSQL. This application allows users to create shortened URLs and automatically redirects users when they visit the shortened links.
 
